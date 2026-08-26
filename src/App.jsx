@@ -6,7 +6,7 @@ import Customers from "./components/Customers";
 import Inventory from "./components/Inventory";
 import SalesPOS from "./components/SalesPOS";
 import Staff from "./components/Staff";
-import GetSupport from "./components/GetSupport";
+
 import RentLease from "./components/Rentrelease";
 import Expenses from "./components/Expenses";
 import Navbar from "./components/Navbar";
