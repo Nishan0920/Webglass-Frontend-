@@ -109,7 +109,13 @@ const emptyInventory = {
 };
 
 const API_URL = "https://webglass-backhend.vercel.app/api";
-const IMAGE_BASE_URL = "https://webglass-backhend.vercel.app/uploads/";
+
+// Images are now served from Mongo via a dedicated route (see backend),
+// keyed by product _id, instead of a static /uploads/<filename> path.
+const productImageUrl = (product) =>
+  product?.ImageContentType
+    ? `${API_URL}/inventory/image/${product._id}`
+    : null;
 
 const Inventory = () => {
   const [showModal, setShowModal] = useState(false);
@@ -269,11 +275,9 @@ const Inventory = () => {
 
     setImageFile(null);
 
-    if (product.Image) {
-      setImagePreview(`${IMAGE_BASE_URL}${product.Image}`);
-    } else {
-      setImagePreview(null);
-    }
+    // Pull the existing image from the backend via the product's id,
+    // instead of a static /uploads/<filename> path.
+    setImagePreview(productImageUrl(product));
 
     setShowModal(true);
   };
@@ -490,6 +494,8 @@ const Inventory = () => {
                 const isLowStock =
                   !isOutOfStock && stock <= LOW_STOCK_THRESHOLD;
 
+                const imgUrl = productImageUrl(product);
+
                 return (
                   <div
                     key={product._id}
@@ -498,9 +504,9 @@ const Inventory = () => {
                     {}
 
                     <div className="relative h-44 w-full bg-gray-50">
-                      {product.Image ? (
+                      {imgUrl ? (
                         <img
-                          src={`${IMAGE_BASE_URL}${product.Image}`}
+                          src={imgUrl}
                           alt={product.ProductName || "Product"}
                           className="h-full w-full object-cover"
                         />

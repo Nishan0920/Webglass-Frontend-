@@ -130,7 +130,7 @@ const Staff = () => {
     setLoading(true);
 
     try {
-      const result = await axios.get("http://localhost:3000/api/staffalldata");
+      const result = await axios.get("https://webglass-backhend.vercel.app/api/staffalldata");
 
       if (result.data.success) {
         setStaff(result.data.staff || []);
@@ -201,7 +201,7 @@ const Staff = () => {
   const performDelete = async (staffId) => {
     try {
       const result = await axios.delete(
-        `http://localhost:3000/api/staff/${staffId}`,
+        `https://webglass-backhend.vercel.app/api/staff/${staffId}`,
       );
 
       if (result.data.success) {
@@ -245,7 +245,7 @@ const Staff = () => {
 
       if (editingStaff) {
         result = await axios.put(
-          `http://localhost:3000/api/staff/${editingStaff._id}`,
+          `https://webglass-backhend.vercel.app/api/staff/${editingStaff._id}`,
           {
             StaffName: data.name,
             PhoneNumber: data.number,
@@ -254,7 +254,7 @@ const Staff = () => {
           },
         );
       } else {
-        result = await axios.post("http://localhost:3000/api/staff", {
+        result = await axios.post("https://webglass-backhend.vercel.app/api/staff", {
           StaffName: data.name,
           PhoneNumber: data.number,
           Email: data.email,
