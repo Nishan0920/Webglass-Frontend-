@@ -122,6 +122,10 @@ const SalesPOS = ({ onSaleCompleted }) => {
 
   const [modal, setModal] = useState(DEFAULT_MODAL_STATE);
 
+  // Tracks whether the user has manually typed a "Due" amount, so switching
+  // Cash -> Due -> Cash -> Due doesn't wipe out what they entered.
+  const dueAmountManuallySetRef = useRef(false);
+
   const closeModal = () => {
     setModal(DEFAULT_MODAL_STATE);
   };
@@ -559,14 +563,41 @@ const SalesPOS = ({ onSaleCompleted }) => {
     });
   };
 
+  // ---------------------------------------------------------------
+  // FIX: keep Amount Paid in sync with Total whenever the payment
+  // method is Cash or QR (those must always be paid in full). Only
+  // "Due" allows a partial, user-editable amount. This runs any time
+  // `total` changes (e.g. items added/removed/edited) OR `paidBy`
+  // changes, so the amount never goes stale and the "please pay the
+  // full amount" false-positive can no longer happen.
+  // ---------------------------------------------------------------
+  useEffect(() => {
+    if (paidBy === "Due") {
+      // Only auto-fill Due the first time we switch into it (if it's
+      // still empty/zero and the user hasn't typed their own value).
+      if (!dueAmountManuallySetRef.current) {
+        setAmountPaid((prev) => (prev === "" ? "0" : prev));
+      }
+
+      return;
+    }
+
+    dueAmountManuallySetRef.current = false;
+    setAmountPaid(String(total));
+  }, [total, paidBy]);
+
   const handlePaymentMethodChange = (method) => {
     setPaidBy(method);
+    // Actual amount syncing is now handled by the useEffect above,
+    // this just switches the selected method.
+  };
 
-    if (method === "Due") {
-      setAmountPaid("0");
-    } else {
-      setAmountPaid(String(total));
+  const handleAmountPaidChange = (e) => {
+    if (paidBy === "Due") {
+      dueAmountManuallySetRef.current = true;
     }
+
+    setAmountPaid(e.target.value);
   };
 
   const resetSaleForm = () => {
@@ -578,6 +609,7 @@ const SalesPOS = ({ onSaleCompleted }) => {
     setProductSearch("");
     setShowProductResults(false);
     setShowCustomerDetails(false);
+    dueAmountManuallySetRef.current = false;
   };
 
   const handleCancelClick = () => {
@@ -1235,10 +1267,19 @@ const SalesPOS = ({ onSaleCompleted }) => {
                     min="0"
                     max={total}
                     value={amountPaid}
-                    onChange={(e) => setAmountPaid(e.target.value)}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none"
+                    onChange={handleAmountPaidChange}
+                    readOnly={paidBy !== "Due"}
+                    className={`w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none ${
+                      paidBy !== "Due" ? "bg-gray-50 text-gray-500" : ""
+                    }`}
                     placeholder="Enter amount paid"
                   />
+
+                  {paidBy !== "Due" && (
+                    <p className="text-[11px] text-gray-400 mt-1">
+                      {paidBy} payments are always paid in full.
+                    </p>
+                  )}
 
                   <div className="flex justify-between mt-2 text-xs">
                     <span className="text-gray-400">Due Amount</span>
