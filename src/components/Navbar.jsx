@@ -24,13 +24,13 @@ const Navbar = () => {
   const navClass = ({ isActive }) =>
     `flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition ${
       isActive
-        ? "bg-blue-600 text-black"
-        : "text-white hover:bg-gray-100 hover:text-black"
+        ? "bg-blue-600 text-white"
+        : "text-black hover:bg-gray-100 hover:text-black"
     }`;
 
   return (
     <>
-      <nav className="flex h-screen w-[280px] flex-col rounded-r-2xl border-r border-gray-200 bg-black px-4 py-6 shadow-sm">
+      <nav className="flex h-screen w-[280px] flex-col rounded-r-2xl border-r border-gray-200 bg-white px-4 py-6 shadow-sm">
         <div className="mb-8 px-3">
           <NavLink to="/dashboard" className="block">
             <img
@@ -80,14 +80,14 @@ const Navbar = () => {
           <button
             type="button"
             onClick={() => setShowSupport(true)}
-            className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-left text-sm font-medium text-white transition hover:bg-gray-100 hover:text-black"
+            className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-left text-sm font-medium text-black transition hover:bg-gray-100 hover:text-black"
           >
             <CircleHelp size={19} />
             <span>Get Support</span>
           </button>
         </div>
 
-        <div className="mt-auto border-t border-gray-700 pt-4">
+        <div className="mt-auto border-t border-gray-200 pt-4">
           <div className="mb-3 flex items-center gap-3 rounded-lg bg-green-500 px-3 py-3">
             <img
               src="https://ui-avatars.com/api/?name=Admin&background=ffffff&color=16a34a&bold=true"
