@@ -110,11 +110,15 @@ const emptyInventory = {
 
 const API_URL = "https://webglass-backhend.vercel.app/api";
 
-// Images are now served from Mongo via a dedicated route (see backend),
-// keyed by product _id, instead of a static /uploads/<filename> path.
+// Images are served from Mongo via a dedicated route, keyed by product _id.
+// We append `?v=<updatedAt timestamp>` so the URL changes whenever the
+// product (and therefore the image) changes - otherwise the browser keeps
+// serving the old cached image for the same /inventory/image/:id URL.
 const productImageUrl = (product) =>
   product?.ImageContentType
-    ? `${API_URL}/inventory/image/${product._id}`
+    ? `${API_URL}/inventory/image/${product._id}?v=${new Date(
+        product.updatedAt || product.createdAt || Date.now()
+      ).getTime()}`
     : null;
 
 const Inventory = () => {
@@ -275,8 +279,8 @@ const Inventory = () => {
 
     setImageFile(null);
 
-    // Pull the existing image from the backend via the product's id,
-    // instead of a static /uploads/<filename> path.
+    // Pull the existing image from the backend via the product's id
+    // (cache-busted so a previously-updated image isn't stale here either).
     setImagePreview(productImageUrl(product));
 
     setShowModal(true);

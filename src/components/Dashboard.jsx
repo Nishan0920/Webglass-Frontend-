@@ -5,7 +5,7 @@ import {
   ArrowDownToLine,
   ArrowUpFromLine,
   Wallet,
-  TrendingUp,
+  Receipt,
   PlusCircle,
   MinusCircle,
   UserPlus,
@@ -48,6 +48,7 @@ export default function Dashboard() {
   const [products, setProducts] = useState([]);
   const [staff, setStaff] = useState([]);
   const [rentPayments, setRentPayments] = useState([]);
+  const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -60,11 +61,12 @@ export default function Dashboard() {
         fetchJson(`${API_BASE}/inventoryalldata`),
         fetchJson(`${API_BASE}/staffalldata`),
         fetchJson(`${ROOT_BASE}/rentandlease/payment`),
+        fetchJson(`${API_BASE}/expenses`),
       ]);
 
       if (cancelled) return;
 
-      const [salesRes, inventoryRes, staffRes, rentRes] = results;
+      const [salesRes, inventoryRes, staffRes, rentRes, expensesRes] = results;
 
       setSales(
         salesRes.status === "fulfilled" ? salesRes.value.sales || [] : [],
@@ -82,6 +84,10 @@ export default function Dashboard() {
 
       setRentPayments(
         rentRes.status === "fulfilled" ? rentRes.value.data || [] : [],
+      );
+
+      setExpenses(
+        expensesRes.status === "fulfilled" ? expensesRes.value.data || [] : [],
       );
 
       const allFailed = results.every((result) => result.status === "rejected");
@@ -125,9 +131,8 @@ export default function Dashboard() {
     0,
   );
 
-  const stockValue = products.reduce(
-    (sum, product) =>
-      sum + Number(product.CostPrice || 0) * Number(product.Stock || 0),
+  const totalExpenses = expenses.reduce(
+    (sum, expense) => sum + Number(expense.amount || 0),
     0,
   );
 
@@ -186,9 +191,9 @@ export default function Dashboard() {
       tone: "blue",
     },
     {
-      icon: TrendingUp,
-      label: "Stock Value",
-      value: currency(stockValue),
+      icon: Receipt,
+      label: "Total Expenses",
+      value: currency(totalExpenses),
       tone: "purple",
     },
   ];

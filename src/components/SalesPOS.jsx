@@ -1047,8 +1047,6 @@ const SalesPOS = ({ onSaleCompleted }) => {
 
                             <th className="pb-2 font-medium">Qty</th>
 
-                            <th className="pb-2 font-medium">Cost</th>
-
                             <th className="pb-2 font-medium">Sell</th>
 
                             <th className="pb-2 font-medium">Discount</th>
@@ -1103,10 +1101,6 @@ const SalesPOS = ({ onSaleCompleted }) => {
                                   }
                                   className="w-16 border border-gray-200 rounded px-2 py-1 text-sm outline-none"
                                 />
-                              </td>
-
-                              <td className="py-3 pr-3 whitespace-nowrap text-gray-500">
-                                Rs. {formatMoney(item.costPrice || 0)}
                               </td>
 
                               <td className="py-3 pr-3 whitespace-nowrap">
@@ -1204,26 +1198,6 @@ const SalesPOS = ({ onSaleCompleted }) => {
 
                     <span className="text-indigo-600">
                       Rs. {formatMoney(total)}
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between text-gray-500 pt-2 border-t border-gray-100">
-                    <span>Total Cost</span>
-
-                    <span className="text-gray-800">
-                      Rs. {formatMoney(totalCost)}
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between font-semibold">
-                    <span>Profit</span>
-
-                    <span
-                      className={
-                        profit >= 0 ? "text-green-600" : "text-red-500"
-                      }
-                    >
-                      Rs. {formatMoney(profit)}
                     </span>
                   </div>
                 </div>
