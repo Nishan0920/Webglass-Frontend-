@@ -122,8 +122,6 @@ const SalesPOS = ({ onSaleCompleted }) => {
 
   const [modal, setModal] = useState(DEFAULT_MODAL_STATE);
 
-  // Tracks whether the user has manually typed a "Due" amount, so switching
-  // Cash -> Due -> Cash -> Due doesn't wipe out what they entered.
   const dueAmountManuallySetRef = useRef(false);
 
   const closeModal = () => {
@@ -563,18 +561,8 @@ const SalesPOS = ({ onSaleCompleted }) => {
     });
   };
 
-  // ---------------------------------------------------------------
-  // FIX: keep Amount Paid in sync with Total whenever the payment
-  // method is Cash or QR (those must always be paid in full). Only
-  // "Due" allows a partial, user-editable amount. This runs any time
-  // `total` changes (e.g. items added/removed/edited) OR `paidBy`
-  // changes, so the amount never goes stale and the "please pay the
-  // full amount" false-positive can no longer happen.
-  // ---------------------------------------------------------------
   useEffect(() => {
     if (paidBy === "Due") {
-      // Only auto-fill Due the first time we switch into it (if it's
-      // still empty/zero and the user hasn't typed their own value).
       if (!dueAmountManuallySetRef.current) {
         setAmountPaid((prev) => (prev === "" ? "0" : prev));
       }
@@ -588,8 +576,6 @@ const SalesPOS = ({ onSaleCompleted }) => {
 
   const handlePaymentMethodChange = (method) => {
     setPaidBy(method);
-    // Actual amount syncing is now handled by the useEffect above,
-    // this just switches the selected method.
   };
 
   const handleAmountPaidChange = (e) => {
@@ -828,8 +814,6 @@ const SalesPOS = ({ onSaleCompleted }) => {
       <AppModal modalState={modal} onClose={closeModal} />
 
       <div className="max-w-[1400px] mx-auto">
-        {}
-
         <div className="bg-white rounded-xl px-5 mb-6">
           <div className="flex items-center gap-6 border-b border-gray-200">
             <button
@@ -864,19 +848,13 @@ const SalesPOS = ({ onSaleCompleted }) => {
           </div>
         </div>
 
-        {}
-
         {activeTab === "pos" && (
           <>
-            {}
-
             <div className="flex flex-wrap justify-between items-center mb-6 gap-3">
               <div>
                 <h2 className="text-2xl font-bold m-0">Sales POS</h2>
               </div>
             </div>
-
-            {}
 
             <div className="relative">
               <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-4 py-3 mb-6">
@@ -954,14 +932,8 @@ const SalesPOS = ({ onSaleCompleted }) => {
                 )}
             </div>
 
-            {}
-
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {}
-
               <div className="lg:col-span-2 space-y-6">
-                {}
-
                 <div className="bg-white rounded-xl p-5">
                   <div className="flex flex-wrap items-end gap-4">
                     <div className="flex-1">
@@ -994,8 +966,6 @@ const SalesPOS = ({ onSaleCompleted }) => {
                       </button>
                     )}
                   </div>
-
-                  {}
 
                   {selectedCustomer && showCustomerDetails && (
                     <div className="mt-5 border-t border-gray-100 pt-5">
@@ -1042,8 +1012,6 @@ const SalesPOS = ({ onSaleCompleted }) => {
                     </div>
                   )}
                 </div>
-
-                {}
 
                 <div className="bg-white rounded-xl p-5">
                   <div className="flex items-center justify-between mb-4">
@@ -1195,8 +1163,6 @@ const SalesPOS = ({ onSaleCompleted }) => {
                 </div>
               </div>
 
-              {}
-
               <div className="bg-white rounded-xl p-5 h-fit space-y-5">
                 <h3 className="font-semibold">Summary</h3>
 
@@ -1234,8 +1200,6 @@ const SalesPOS = ({ onSaleCompleted }) => {
                   </div>
                 </div>
 
-                {}
-
                 <div>
                   <p className="text-xs text-gray-400 mb-2">Paid By</p>
 
@@ -1256,8 +1220,6 @@ const SalesPOS = ({ onSaleCompleted }) => {
                     ))}
                   </div>
                 </div>
-
-                {}
 
                 <div>
                   <p className="text-xs text-gray-400 mb-2">Amount Paid</p>
@@ -1296,8 +1258,6 @@ const SalesPOS = ({ onSaleCompleted }) => {
                   </div>
                 </div>
 
-                {}
-
                 <div>
                   <p className="text-xs text-gray-400 mb-2">Note</p>
 
@@ -1309,8 +1269,6 @@ const SalesPOS = ({ onSaleCompleted }) => {
                     placeholder="Add a note"
                   />
                 </div>
-
-                {}
 
                 <button
                   type="button"
@@ -1329,8 +1287,6 @@ const SalesPOS = ({ onSaleCompleted }) => {
                   )}
                 </button>
 
-                {}
-
                 <div className="flex gap-3">
                   <button
                     type="button"
@@ -1344,8 +1300,6 @@ const SalesPOS = ({ onSaleCompleted }) => {
             </div>
           </>
         )}
-
-        {}
 
         {activeTab === "details" && (
           <div className="w-full">
