@@ -6,7 +6,6 @@ const API_URL = "https://webglass-backhend.vercel.app/api/expenses";
 const initialData = {
   date: "",
   name: "",
-  category: "",
   vendor: "",
   paymentMethod: "Bank Transfer",
   amount: "",
@@ -216,7 +215,6 @@ const Expenses = () => {
     setData({
       date: expense.date ? expense.date.slice(0, 10) : "",
       name: expense.name || "",
-      category: expense.category || "",
       vendor: expense.vendor || "",
       paymentMethod: expense.paymentMethod || "Bank Transfer",
       amount: expense.amount || "",
@@ -284,7 +282,6 @@ const Expenses = () => {
       const payload = {
         date: data.date,
         name: data.name,
-        category: data.category,
         vendor: data.vendor,
         paymentMethod: data.paymentMethod,
         amount: Number(data.amount),
@@ -337,7 +334,6 @@ const Expenses = () => {
     const matchesSearch =
       !searchValue ||
       expense.name?.toLowerCase().includes(searchValue) ||
-      expense.category?.toLowerCase().includes(searchValue) ||
       expense.vendor?.toLowerCase().includes(searchValue);
 
     let matchesTab = true;
@@ -362,10 +358,6 @@ const Expenses = () => {
     (expense) => expense.isBill === true,
   ).length;
 
-  const categoriesCount = new Set(
-    expenses.map((expense) => expense.category).filter(Boolean),
-  ).size;
-
   const avgPerDay =
     expenses.length > 0 ? Math.round(totalExpenses / new Date().getDate()) : 0;
 
@@ -376,7 +368,7 @@ const Expenses = () => {
           showModal || alertModal.show ? "blur-sm" : ""
         }`}
       >
-        <div className="grid grid-cols-4 gap-4 mb-5 shrink-0">
+        <div className="grid grid-cols-3 gap-4 mb-5 shrink-0">
           <div className="bg-white p-4 rounded-xl flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center">
               🧾
@@ -402,20 +394,6 @@ const Expenses = () => {
               <p className="text-xs text-gray-500">Bills</p>
 
               <h3 className="text-xl font-semibold">{billsCount}</h3>
-
-              <span className="text-xs text-gray-400">This Month</span>
-            </div>
-          </div>
-
-          <div className="bg-white p-4 rounded-xl flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
-              🎁
-            </div>
-
-            <div>
-              <p className="text-xs text-gray-500">Categories</p>
-
-              <h3 className="text-xl font-semibold">{categoriesCount}</h3>
 
               <span className="text-xs text-gray-400">This Month</span>
             </div>
@@ -481,7 +459,7 @@ const Expenses = () => {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search expense, category or vendor"
+              placeholder="Search expense or vendor"
               className="w-full outline-none text-sm"
             />
           </div>
@@ -513,10 +491,6 @@ const Expenses = () => {
                 </th>
 
                 <th className="text-center px-4 py-3 text-gray-500 font-medium">
-                  Category
-                </th>
-
-                <th className="text-center px-4 py-3 text-gray-500 font-medium">
                   Vendor
                 </th>
 
@@ -538,7 +512,7 @@ const Expenses = () => {
               {loading ? (
                 <tr>
                   <td
-                    colSpan={7}
+                    colSpan={6}
                     className="px-4 py-10 text-center text-gray-400"
                   >
                     Loading expenses...
@@ -563,8 +537,6 @@ const Expenses = () => {
                     <td className="px-4 py-3 font-medium">
                       {expense.name || "-"}
                     </td>
-
-                    <td className="px-4 py-3">{expense.category || "-"}</td>
 
                     <td className="px-4 py-3">{expense.vendor || "—"}</td>
 
@@ -598,7 +570,7 @@ const Expenses = () => {
               ) : (
                 <tr>
                   <td
-                    colSpan={7}
+                    colSpan={6}
                     className="px-4 py-10 text-center text-gray-400"
                   >
                     {search
@@ -682,35 +654,18 @@ const Expenses = () => {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs text-gray-500 mb-1">
-                      Category
-                    </label>
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">
+                    Vendor
+                  </label>
 
-                    <input
-                      type="text"
-                      name="category"
-                      value={data.category}
-                      onChange={handleChange}
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs text-gray-500 mb-1">
-                      Vendor
-                    </label>
-
-                    <input
-                      type="text"
-                      name="vendor"
-                      value={data.vendor}
-                      onChange={handleChange}
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm"
-                    />
-                  </div>
+                  <input
+                    type="text"
+                    name="vendor"
+                    value={data.vendor}
+                    onChange={handleChange}
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm"
+                  />
                 </div>
 
                 <div>

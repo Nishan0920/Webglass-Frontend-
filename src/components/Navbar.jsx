@@ -69,7 +69,7 @@ const Navbar = () => {
 
           <NavLink to="/rent" className={navClass}>
             <Building2 size={19} />
-            <span>Rent / Lease</span>
+            <span>Rent </span>
           </NavLink>
 
           <NavLink to="/expenses" className={navClass}>
