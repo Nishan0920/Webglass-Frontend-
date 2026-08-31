@@ -110,6 +110,10 @@ const emptyInventory = {
 
 const API_URL = "https://webglass-backhend.vercel.app/api";
 
+// Simple 4-digit access code required before the inventory screen is shown.
+// Change this to whatever code you want staff to use.
+const INVENTORY_PIN = "1234";
+
 // Images are served from Mongo via a dedicated route, keyed by product _id.
 // We append `?v=<updatedAt timestamp>` so the URL changes whenever the
 // product (and therefore the image) changes - otherwise the browser keeps
@@ -122,6 +126,10 @@ const productImageUrl = (product) =>
     : null;
 
 const Inventory = () => {
+  const [pinVerified, setPinVerified] = useState(false);
+  const [pinInput, setPinInput] = useState("");
+  const [pinError, setPinError] = useState("");
+
   const [showModal, setShowModal] = useState(false);
   const [inventories, setInventories] = useState([]);
   const [editingInventory, setEditingInventory] = useState(null);
@@ -444,6 +452,78 @@ const Inventory = () => {
         .includes(searchValue)
     );
   });
+
+  const handlePinSubmit = (e) => {
+    e.preventDefault();
+
+    if (pinInput === INVENTORY_PIN) {
+      setPinError("");
+      setPinVerified(true);
+    } else {
+      setPinError("Incorrect code. Please try again.");
+      setPinInput("");
+    }
+  };
+
+  const handlePinChange = (e) => {
+    const digitsOnly = e.target.value.replace(/\D/g, "").slice(0, 4);
+
+    setPinInput(digitsOnly);
+
+    if (pinError) {
+      setPinError("");
+    }
+  };
+
+  if (!pinVerified) {
+    return (
+      <div className="flex min-h-screen w-full items-center justify-center bg-gray-100 p-8">
+        <form
+          onSubmit={handlePinSubmit}
+          className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-sm"
+        >
+          <div className="mb-6 text-center">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-indigo-50 text-indigo-600">
+              <i className="fa-solid fa-lock"></i>
+            </div>
+
+            <h2 className="text-lg font-semibold text-gray-900">
+              Enter Access Code
+            </h2>
+
+            <p className="mt-1 text-sm text-gray-400">
+              Enter the 4-digit code to open Inventory
+            </p>
+          </div>
+
+          <input
+            type="password"
+            inputMode="numeric"
+            autoFocus
+            value={pinInput}
+            onChange={handlePinChange}
+            maxLength={4}
+            placeholder="••••"
+            className="w-full rounded-lg border border-gray-200 px-4 py-3 text-center text-2xl tracking-[0.5em] outline-none focus:border-indigo-500"
+          />
+
+          {pinError && (
+            <p className="mt-3 text-center text-sm text-red-500">
+              {pinError}
+            </p>
+          )}
+
+          <button
+            type="submit"
+            disabled={pinInput.length !== 4}
+            className="mt-5 w-full rounded-lg bg-indigo-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Unlock Inventory
+          </button>
+        </form>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen w-full bg-gray-100 p-8">
