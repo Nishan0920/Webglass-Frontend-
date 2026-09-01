@@ -88,7 +88,7 @@ const Navbar = () => {
         </div>
 
         <div className="mt-auto border-t border-gray-200 pt-4">
-          <div className="mb-3 flex items-center gap-3 rounded-lg bg-green-500 px-3 py-3">
+          <div className="mb-3 flex items-center gap-3 rounded-lg bg-blue-500  px-3 py-3">
             <img
               src="https://ui-avatars.com/api/?name=Admin&background=ffffff&color=16a34a&bold=true"
               alt="Admin"
