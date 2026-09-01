@@ -72,7 +72,15 @@ function AlertModal({ alertState, onClose, onConfirm }) {
   );
 }
 
+// Simple 4-digit access code required before the staff screen is shown.
+// Change this to whatever code you want staff-access to use.
+const STAFF_PIN = "1234";
+
 const Staff = () => {
+  const [pinVerified, setPinVerified] = useState(false);
+  const [pinInput, setPinInput] = useState("");
+  const [pinError, setPinError] = useState("");
+
   const [showModal, setShowModal] = useState(false);
   const [editingStaff, setEditingStaff] = useState(null);
 
@@ -130,7 +138,9 @@ const Staff = () => {
     setLoading(true);
 
     try {
-      const result = await axios.get("https://webglass-backhend.vercel.app/api/staffalldata");
+      const result = await axios.get(
+        "https://webglass-backhend.vercel.app/api/staffalldata",
+      );
 
       if (result.data.success) {
         setStaff(result.data.staff || []);
@@ -254,12 +264,15 @@ const Staff = () => {
           },
         );
       } else {
-        result = await axios.post("https://webglass-backhend.vercel.app/api/staff", {
-          StaffName: data.name,
-          PhoneNumber: data.number,
-          Email: data.email,
-          Designation: data.designation,
-        });
+        result = await axios.post(
+          "https://webglass-backhend.vercel.app/api/staff",
+          {
+            StaffName: data.name,
+            PhoneNumber: data.number,
+            Email: data.email,
+            Designation: data.designation,
+          },
+        );
       }
 
       if (result.data.success) {
@@ -291,7 +304,11 @@ const Staff = () => {
           "error",
         );
       } else if (error.request) {
-        showAlert("Unable to Save", "Could not connect to the server.", "error");
+        showAlert(
+          "Unable to Save",
+          "Could not connect to the server.",
+          "error",
+        );
       } else {
         showAlert("Unable to Save", "Something went wrong.", "error");
       }
@@ -311,6 +328,76 @@ const Staff = () => {
       staffMember.Email?.toLowerCase().includes(searchValue)
     );
   });
+
+  const handlePinSubmit = (e) => {
+    e.preventDefault();
+
+    if (pinInput === STAFF_PIN) {
+      setPinError("");
+      setPinVerified(true);
+    } else {
+      setPinError("Incorrect code. Please try again.");
+      setPinInput("");
+    }
+  };
+
+  const handlePinChange = (e) => {
+    const digitsOnly = e.target.value.replace(/\D/g, "").slice(0, 4);
+
+    setPinInput(digitsOnly);
+
+    if (pinError) {
+      setPinError("");
+    }
+  };
+
+  if (!pinVerified) {
+    return (
+      <div className="flex min-h-screen w-full items-center justify-center bg-gray-100 p-8">
+        <form
+          onSubmit={handlePinSubmit}
+          className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-sm"
+        >
+          <div className="mb-6 text-center">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-indigo-50 text-indigo-600">
+              <i className="fa-solid fa-lock"></i>
+            </div>
+
+            <h2 className="text-lg font-semibold text-gray-900">
+              Enter Access Code
+            </h2>
+
+            <p className="mt-1 text-sm text-gray-400">
+              Enter the 4-digit code to open Staff / Salary Management
+            </p>
+          </div>
+
+          <input
+            type="password"
+            inputMode="numeric"
+            autoFocus
+            value={pinInput}
+            onChange={handlePinChange}
+            maxLength={4}
+            placeholder="••••"
+            className="w-full rounded-lg border border-gray-200 px-4 py-3 text-center text-2xl tracking-[0.5em] outline-none focus:border-indigo-500"
+          />
+
+          {pinError && (
+            <p className="mt-3 text-center text-sm text-red-500">{pinError}</p>
+          )}
+
+          <button
+            type="submit"
+            disabled={pinInput.length !== 4}
+            className="mt-5 w-full rounded-lg bg-indigo-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Unlock Staff Management
+          </button>
+        </form>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white p-4 sm:p-6">
