@@ -11,6 +11,8 @@ import RentLease from "./components/Rentrelease";
 import Expenses from "./components/Expenses";
 import Navbar from "./components/Navbar";
 
+import AdminDashboard from "./components/AdminDashboard";
+
 const ProtectedRoute = ({ children }) => {
   const isLoggedIn = localStorage.getItem("isLoggedIn");
 
@@ -25,12 +27,16 @@ const AppLayout = () => {
   const location = useLocation();
 
   const isSigninPage = location.pathname === "/signin";
+  const isAdminPage = location.pathname.startsWith("/admin");
 
-  // Signin page does not have Navbar
-  if (isSigninPage) {
+  // Signin and Admin pages don't use the client Navbar/sidebar layout —
+  // AdminDashboard has its own sidebar built in, and handles its own
+  // login screen internally (checks for adminToken in localStorage).
+  if (isSigninPage || isAdminPage) {
     return (
       <Routes>
         <Route path="/signin" element={<Signin />} />
+        <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
     );
   }
