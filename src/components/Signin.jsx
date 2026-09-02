@@ -204,11 +204,11 @@ const Signin = () => {
       <AppModal modalState={modal} onClose={closeModal} />
 
       <div className="flex min-h-screen items-center justify-center px-6">
-        <div className="hidden h-[500px] w-[500px] shrink-0 flex-col items-center justify-center rounded-l-2xl bg-blue-600 shadow-xl lg:flex">
+        <div className="relative hidden h-[500px] w-[500px] shrink-0 flex-col items-center justify-center rounded-l-2xl bg-blue-600 shadow-xl lg:flex">
           <img
             src="/trypt-logo.png"
             alt="OptiFlow logo"
-            className="h-10 w-10 object-contain mb-4"
+            className="absolute left-6 top-6 h-10 w-10 object-contain brightness-0 invert"
           />
 
           <div className="px-10 text-center">
