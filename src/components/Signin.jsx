@@ -3,6 +3,102 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 
+const MODAL_STYLES = {
+  danger: {
+    icon: "🗑",
+    iconBg: "bg-red-50",
+    iconColor: "text-red-500",
+    confirmBtn: "bg-red-600 hover:bg-red-700",
+  },
+  warning: {
+    icon: "!",
+    iconBg: "bg-amber-50",
+    iconColor: "text-amber-500",
+    confirmBtn: "bg-amber-500 hover:bg-amber-600",
+  },
+  info: {
+    icon: "i",
+    iconBg: "bg-indigo-50",
+    iconColor: "text-indigo-500",
+    confirmBtn: "bg-indigo-600 hover:bg-indigo-700",
+  },
+};
+
+function AppModal({ modalState, onClose }) {
+  if (!modalState.open) return null;
+
+  const style = MODAL_STYLES[modalState.variant] || MODAL_STYLES.info;
+
+  const handleConfirm = () => {
+    if (modalState.onConfirm) {
+      modalState.onConfirm();
+    }
+
+    onClose();
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 px-4"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-md bg-white rounded-2xl shadow-xl p-6"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start gap-4">
+          <div
+            className={`w-11 h-11 shrink-0 rounded-full flex items-center justify-center text-lg font-bold ${style.iconBg} ${style.iconColor}`}
+          >
+            {style.icon}
+          </div>
+
+          <div className="flex-1 pt-1">
+            <h3 className="text-base font-semibold text-gray-900 m-0">
+              {modalState.title}
+            </h3>
+
+            <p className="text-sm text-gray-500 mt-2 leading-relaxed whitespace-pre-line">
+              {modalState.message}
+            </p>
+          </div>
+        </div>
+
+        <div className="border-t border-gray-100 mt-5 pt-4 flex justify-end gap-3">
+          {modalState.showCancel && (
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 rounded-lg border border-gray-200 text-sm text-gray-700 hover:bg-gray-50"
+            >
+              {modalState.cancelText || "Cancel"}
+            </button>
+          )}
+
+          <button
+            type="button"
+            onClick={handleConfirm}
+            className={`px-4 py-2 rounded-lg text-sm font-medium text-white ${style.confirmBtn}`}
+          >
+            {modalState.confirmText || "OK"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const DEFAULT_MODAL_STATE = {
+  open: false,
+  title: "",
+  message: "",
+  variant: "info",
+  confirmText: "OK",
+  cancelText: "Cancel",
+  showCancel: false,
+  onConfirm: null,
+};
+
 const Signin = () => {
   const navigate = useNavigate();
 
@@ -12,6 +108,39 @@ const Signin = () => {
   });
 
   const [showPassword, setShowPassword] = useState(false);
+
+  const [modal, setModal] = useState(DEFAULT_MODAL_STATE);
+
+  const closeModal = () => {
+    setModal(DEFAULT_MODAL_STATE);
+  };
+
+  const showAlert = (message, opts = {}) => {
+    const text = String(message || "");
+
+    let variant = opts.variant;
+
+    if (!variant) {
+      if (/could not connect|server error|something went wrong/i.test(text)) {
+        variant = "info";
+      } else if (/invalid email or password|user doesn't exist/i.test(text)) {
+        variant = "warning";
+      } else {
+        variant = "info";
+      }
+    }
+
+    setModal({
+      ...DEFAULT_MODAL_STATE,
+      open: true,
+      title: opts.title || "Heads up",
+      message: text,
+      variant,
+      confirmText: opts.confirmText || "OK",
+      showCancel: false,
+      onConfirm: opts.onConfirm || null,
+    });
+  };
 
   const handleOnSubmit = async (e) => {
     e.preventDefault();
@@ -30,21 +159,35 @@ const Signin = () => {
       if (response.data.success) {
         localStorage.setItem("isLoggedIn", "true");
 
-        alert("Welcome!");
-
-        navigate("/dashboard", {
-          replace: true,
+        showAlert("Welcome!", {
+          title: "Signed in",
+          variant: "info",
+          confirmText: "Continue",
+          onConfirm: () => {
+            navigate("/dashboard", {
+              replace: true,
+            });
+          },
         });
       }
     } catch (error) {
       console.log(error);
 
       if (error.response?.status === 409) {
-        alert("User doesn't exist");
+        showAlert("User doesn't exist", {
+          title: "Account not found",
+          variant: "warning",
+        });
       } else if (error.response?.status === 401) {
-        alert("Invalid email or password");
+        showAlert("Invalid email or password", {
+          title: "Sign in failed",
+          variant: "warning",
+        });
       } else {
-        alert(error.response?.data?.message || "Something went wrong");
+        showAlert(error.response?.data?.message || "Something went wrong", {
+          title: "Sign in failed",
+          variant: "danger",
+        });
       }
     }
   };
@@ -58,6 +201,8 @@ const Signin = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
+      <AppModal modalState={modal} onClose={closeModal} />
+
       <div className="flex min-h-screen items-center justify-center px-6">
         <div className="hidden h-[500px] w-[500px] shrink-0 items-center justify-center rounded-l-2xl bg-blue-600 shadow-xl lg:flex">
           <div className="px-10 text-center">
