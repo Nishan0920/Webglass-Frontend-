@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
+import tryptLogo from "./assets/trypt-logo.png"; // adjust this path to wherever you place the logo file
 
 const MODAL_STYLES = {
   danger: {
@@ -39,7 +40,7 @@ function AppModal({ modalState, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 px-4"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4"
       onClick={onClose}
     >
       <div
@@ -204,8 +205,14 @@ const Signin = () => {
       <AppModal modalState={modal} onClose={closeModal} />
 
       <div className="flex min-h-screen items-center justify-center px-6">
-        <div className="hidden h-[500px] w-[500px] shrink-0 items-center justify-center rounded-l-2xl bg-blue-600 shadow-xl lg:flex">
+        <div className="hidden h-[500px] w-[500px] shrink-0 flex-col items-center justify-center rounded-l-2xl bg-blue-600 shadow-xl lg:flex">
           <div className="px-10 text-center">
+            <img
+              src={tryptLogo}
+              alt="Trypt logo"
+              className="mx-auto mb-6 h-16 w-auto"
+            />
+
             <h1 className="text-6xl font-bold tracking-tight text-white">
               OptiFlow
             </h1>
