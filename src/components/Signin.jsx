@@ -39,7 +39,7 @@ function AppModal({ modalState, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 px-4"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4"
       onClick={onClose}
     >
       <div
@@ -204,10 +204,13 @@ const Signin = () => {
       <AppModal modalState={modal} onClose={closeModal} />
 
       <div className="flex min-h-screen items-center justify-center px-6">
-        <div className="hidden h-[500px] w-[500px] shrink-0 items-center justify-center rounded-l-2xl bg-blue-600 shadow-xl lg:flex">
-          <div>
-             <img src="/trypt-logo.png" className="h-20 w-20 p-4" />
-          </div>
+        <div className="hidden h-[500px] w-[500px] shrink-0 flex-col items-center justify-center rounded-l-2xl bg-blue-600 shadow-xl lg:flex">
+          <img
+            src="/trypt-logo.png"
+            alt="OptiFlow logo"
+            className="h-10 w-10 object-contain mb-4"
+          />
+
           <div className="px-10 text-center">
             <h1 className="text-6xl font-bold tracking-tight text-white">
               OptiFlow
