@@ -208,7 +208,7 @@ const Signin = () => {
           <img
             src="/trypt-logo.png"
             alt="OptiFlow logo"
-            className="absolute left-6 top-6 h-10 w-10 object-contain brightness-0 invert"
+            className="absolute left-6 top-6 h-14 w-14 object-contain brightness-0 invert"
           />
 
           <div className="px-10 text-center">
